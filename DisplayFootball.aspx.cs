@@ -37,12 +37,15 @@ namespace WebApplication4
 
 
                     String club = " ";
+               
                     if (dr.HasRows) // Check if there are rows
                     {
                         while (dr.Read()) // Read each row
                         {
 
-                             club = string.Format("{0}", dr["Club"]);
+                              club = string.Format("{0}", dr["Club"]);
+                         
+                           
                             // Access data using dr[index] or dr["columnName"]
                             // Example: string username = dr["username"].ToString();
                         }
@@ -103,14 +106,66 @@ namespace WebApplication4
             
             }
 
+
+
+            String sqlRead = "SELECT * from Footballer ";
+            SqlCommand sqlCommand = new SqlCommand(sqlRead, con);
+
+           
+
+
+
+            SqlDataReader dr = sqlCommand.ExecuteReader();
+        
+
+            
+            String club = " ";
+            String footballerFromDB = " ";
+            List<string> footballerDB = new List<string>();
+            if (dr.HasRows) // Check if there are rows
+            {
+                while (dr.Read()) // Read each row
+                {
+
+                    club = string.Format("{0}", dr["Club"]);
+                    footballerFromDB = string.Format("{0}", dr["Footballer"]);
+                
+                    footballerDB.Add(footballerFromDB);
+
+                    // Access data using dr[index] or dr["columnName"]
+                    // Example: string username = dr["username"].ToString();
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data found.");
+            }
+            con.Close();
+            if (footballerDB.Contains(txtfootballer))
+            {
+
+
               
 
-            String sqlInsert = @"INSERT INTO Footballer(Club,Footballer) VALUES(@Club,@Footballer)";
-            SqlCommand sqlCommand =new SqlCommand(sqlInsert, con);
-            sqlCommand.Parameters.AddWithValue("@Club",txtClub.ToString());
-            sqlCommand.Parameters.AddWithValue("@Footballer", txtfootballer);
-            sqlCommand.ExecuteNonQuery();
-            con.Close();    
+                Response.Write("<script>alert('Footballer was found in DB');</script>");
+            }
+
+            else
+            {
+                con.Open();
+                Console.WriteLine("insert successfully");
+                String sqlInsert = @"INSERT INTO Footballer(Club,Footballer) VALUES(@Club,@Footballer)";
+                SqlCommand sqlCommandInsert = new SqlCommand(sqlInsert, con);
+                sqlCommandInsert.Parameters.AddWithValue("@Club", txtClub.ToString());
+                sqlCommandInsert.Parameters.AddWithValue("@Footballer", txtfootballer);
+                sqlCommandInsert.ExecuteNonQuery();
+
+
+                con.Close();
+
+            }
+
+
 
         }
     }
